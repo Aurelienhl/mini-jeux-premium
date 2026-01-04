@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plateforme premium de mini-jeux multijoueurs - Snake, Tic Tac Toe, Memory, 2048 et plus">
+    <title>Mini Jeux Premium - Plateforme Multijoueurs</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Sidebar pour les statistiques et profil -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>🎮 Profil</h3>
+                <button class="sidebar-toggle" id="sidebar-close">✕</button>
+            </div>
+            <div class="player-profile">
+                <div class="player-avatar" id="player-avatar">👤</div>
+                <input type="text" id="player-name" class="player-name-input" placeholder="Votre nom" maxlength="20">
+                <div class="player-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Parties jouées</span>
+                        <span class="stat-value" id="total-games">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Score total</span>
+                        <span class="stat-value" id="total-score">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Temps de jeu</span>
+                        <span class="stat-value" id="play-time">0h</span>
+                    </div>
+                </div>
+            </div>
+            <div class="leaderboard-section">
+                <h4>🏆 Classements</h4>
+                <div class="leaderboard-tabs">
+                    <button class="leaderboard-tab active" data-tab="global">Global</button>
+                    <button class="leaderboard-tab" data-tab="today">Aujourd'hui</button>
+                </div>
+                <div class="leaderboard-list" id="leaderboard-list"></div>
+            </div>
+        </aside>
+
+        <!-- Contenu principal -->
+        <div class="main-wrapper">
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebar-open">☰</button>
+                    <h1 class="logo">🎮 Mini Jeux Premium</h1>
+                </div>
+                <div class="header-right">
+                    <div class="online-indicator">
+                        <span class="indicator-dot"></span>
+                        <span class="indicator-text">Hors ligne</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page d'accueil avec la liste des jeux -->
+            <div class="home-page">
+                <h1 class="home-title">🎮 Jeux Premium</h1>
+                <div class="games-grid">
+                    <button class="game-card" data-game="snake">
+                        <span class="game-icon">🐍</span>
+                        <span class="game-name">Snake</span>
+                    </button>
+                    <button class="game-card" data-game="tictactoe">
+                        <span class="game-icon">⭕</span>
+                        <span class="game-name">Tic Tac Toe</span>
+                    </button>
+                    <button class="game-card" data-game="memory">
+                        <span class="game-icon">🧠</span>
+                        <span class="game-name">Memory</span>
+                    </button>
+                    <button class="game-card" data-game="reaction">
+                        <span class="game-icon">⚡</span>
+                        <span class="game-name">Test de Réaction</span>
+                    </button>
+                    <button class="game-card" data-game="puzzle2048">
+                        <span class="game-icon">🧩</span>
+                        <span class="game-name">2048</span>
+                    </button>
+                    <button class="game-card" data-game="calculator">
+                        <span class="game-icon">🔢</span>
+                        <span class="game-name">Calcul Mental</span>
+                    </button>
+                    <button class="game-card" data-game="pong">
+                        <span class="game-icon">🏓</span>
+                        <span class="game-name">Pong</span>
+                    </button>
+                    <button class="game-card" data-game="wordle">
+                        <span class="game-icon">📝</span>
+                        <span class="game-name">Wordle</span>
+                    </button>
+                </div>
+            </div>
+
+            <main class="main-content">
+                <!-- Snake Game -->
+                <div id="snake" class="game-container">
+                    <div class="game-header">
+                        <div class="game-title-section">
+                            <h2>🐍 Snake</h2>
+                            <span class="game-badge">Solo</span>
+                        </div>
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" id="snake-score">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Meilleur</span>
+                                <span class="score-value" id="snake-best">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Niveau</span>
+                                <span class="score-value" id="snake-level">1</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-wrapper">
+                        <canvas id="snake-canvas" width="500" height="500" style="display: block;"></canvas>
+                        <div class="game-overlay" id="snake-overlay">
+                            <div class="overlay-content">
+                                <h3>🐍 Snake</h3>
+                                <p>Utilisez les flèches pour diriger le serpent</p>
+                                <p class="overlay-hint">Plus vous mangez, plus vous grandissez !</p>
+                                <button class="btn-primary" id="snake-start">Commencer</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn-secondary" id="snake-pause">⏸ Pause</button>
+                        <button class="btn-secondary" id="snake-reset">🔄 Réinitialiser</button>
+                        <select class="difficulty-select" id="snake-difficulty">
+                            <option value="easy">Facile</option>
+                            <option value="medium" selected>Moyen</option>
+                            <option value="hard">Difficile</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tic Tac Toe Game -->
+                <div id="tictactoe" class="game-container">
+                    <div class="game-header">
+                        <div class="game-title-section">
+                            <h2>⭕ Tic Tac Toe</h2>
+                            <span class="game-badge multiplayer">Multijoueur</span>
+                        </div>
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">Joueur X</span>
+                                <span class="score-value" id="x-wins">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Joueur O</span>
+                                <span class="score-value" id="o-wins">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Matchs nuls</span>
+                                <span class="score-value" id="draws">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-wrapper">
+                        <div class="tictactoe-board" id="tictactoe-board"></div>
+                    </div>
+                    <div class="game-status" id="tictactoe-status">Tour du joueur <span id="current-player">X</span></div>
+                    <div class="game-controls">
+                        <button class="btn-primary" id="tictactoe-reset">🔄 Nouvelle Partie</button>
+                        <button class="btn-secondary" id="tictactoe-ai">🤖 Mode IA</button>
+                    </div>
+                </div>
+
+                <!-- Memory Game -->
+                <div id="memory" class="game-container">
+                    <div class="game-header">
+                        <div class="game-title-section">
+                            <h2>🧠 Memory</h2>
+                            <span class="game-badge">Solo</span>
+                        </div>
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">Coups</span>
+                                <span class="score-value" id="memory-moves">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Paires</span>
+                                <span class="score-value" id="memory-pairs">0</span>/8
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Temps</span>
+                                <span class="score-value" id="memory-time">0s</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-wrapper">
+                        <div class="memory-grid" id="memory-grid"></div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn-primary" id="memory-reset">🔄 Nouvelle Partie</button>
+                        <select class="difficulty-select" id="memory-difficulty">
+                            <option value="easy" selected>Facile (4x4)</option>
+                            <option value="medium">Moyen (4x4)</option>
+                            <option value="hard">Difficile (6x4)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Reaction Test Game -->
+                <div id="reaction" class="game-container">
+                    <div class="game-header">
+                        <div class="game-title-section">
+                            <h2>⚡ Test de Réaction</h2>
+                            <span class="game-badge">Solo</span>
+                        </div>
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">Meilleur</span>
+                                <span class="score-value" id="reaction-best">-</span> ms
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Moyenne</span>
+                                <span class="score-value" id="reaction-avg">-</span> ms
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Essais</span>
+                                <span class="score-value" id="reaction-tries">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-wrapper">
+                        <div class="reaction-box" id="reaction-box">
+                            <p id="reaction-text">Cliquez quand la boîte devient verte !</p>
+                        </div>
+                    </div>
+                    <div class="game-status" id="reaction-status">Prêt ? Cliquez pour commencer</div>
+                    <div class="game-controls">
+                        <button class="btn-primary" id="reaction-start">▶️ Commencer</button>
+                    </div>
+                </div>
+
+                <!-- 2048 Game -->
+                <div id="puzzle2048" class="game-container">
+                    <div class="game-header">
+                        <div class="game-title-section">
+                            <h2>🧩 2048</h2>
+                            <span class="game-badge">Solo</span>
+                        </div>
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" id="puzzle2048-score">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Meilleur</span>
+                                <span class="score-value" id="puzzle2048-best">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Tuile max</span>
+                                <span class="score-value" id="puzzle2048-max">2</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-wrapper">
+                        <div class="puzzle2048-grid" id="puzzle2048-grid"></div>
+                        <div class="game-overlay" id="puzzle2048-overlay">
+                            <div class="overlay-content">
+                                <h3>🧩 2048</h3>
+                                <p>Utilisez les flèches pour fusionner les tuiles</p>
+                                <p class="overlay-hint">Objectif : Atteindre la tuile 2048 !</p>
+                                <button class="btn-primary" id="puzzle2048-start">Commencer</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn-secondary" id="puzzle2048-reset">🔄 Réinitialiser</button>
+                    </div>
+                </div>
+
+                <!-- Calculator Game -->
+                <div id="calculator" class="game-container">
+                    <div class="game-header">
+                        <div class="game-title-section">
+                            <h2>🔢 Calcul Mental</h2>
+                            <span class="game-badge">Solo</span>
+                        </div>
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">Score</span>
+                                <span class="score-value" id="calc-score">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Correct</span>
+                                <span class="score-value" id="calc-correct">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Précision</span>
+                                <span class="score-value" id="calc-accuracy">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-wrapper">
+                        <div class="calculator-game">
+                            <div class="question-display" id="calc-question">Prêt à commencer ?</div>
+                            <input type="number" id="calc-answer" class="answer-input" placeholder="Votre réponse">
+                        </div>
+                    </div>
+                    <div class="game-status" id="calc-status"></div>
+                    <div class="game-controls">
+                        <button class="btn-primary" id="calc-start">▶️ Commencer</button>
+                        <button class="btn-secondary" id="calc-submit">✓ Valider</button>
+                        <select class="difficulty-select" id="calc-difficulty">
+                            <option value="easy">Facile</option>
+                            <option value="medium" selected>Moyen</option>
+                            <option value="hard">Difficile</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Pong Game -->
+                <div id="pong" class="game-container">
+                    <div class="game-header">
+                        <div class="game-title-section">
+                            <h2>🏓 Pong</h2>
+                            <span class="game-badge multiplayer">Multijoueur</span>
+                        </div>
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">Joueur 1</span>
+                                <span class="score-value" id="pong-score1">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Joueur 2</span>
+                                <span class="score-value" id="pong-score2">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Vitesse</span>
+                                <span class="score-value" id="pong-speed">1x</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-wrapper">
+                        <canvas id="pong-canvas" width="600" height="400"></canvas>
+                        <div class="game-overlay" id="pong-overlay">
+                            <div class="overlay-content">
+                                <h3>🏓 Pong</h3>
+                                <p>Joueur 1: W/S | Joueur 2: ↑/↓</p>
+                                <p class="overlay-hint">Premier à 5 points gagne !</p>
+                                <button class="btn-primary" id="pong-start">Commencer</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn-secondary" id="pong-pause">⏸ Pause</button>
+                        <button class="btn-secondary" id="pong-reset">🔄 Réinitialiser</button>
+                    </div>
+                </div>
+
+                <!-- Wordle Game -->
+                <div id="wordle" class="game-container">
+                    <div class="game-header">
+                        <div class="game-title-section">
+                            <h2>📝 Wordle</h2>
+                            <span class="game-badge">Solo</span>
+                        </div>
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">Parties</span>
+                                <span class="score-value" id="wordle-games">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Victoires</span>
+                                <span class="score-value" id="wordle-wins">0</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">Série</span>
+                                <span class="score-value" id="wordle-streak">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-wrapper">
+                        <div class="wordle-game">
+                            <div class="wordle-grid" id="wordle-grid"></div>
+                            <div class="wordle-keyboard" id="wordle-keyboard"></div>
+                        </div>
+                        <div class="game-overlay" id="wordle-overlay">
+                            <div class="overlay-content">
+                                <h3>📝 Wordle</h3>
+                                <p>Devinez le mot en 6 tentatives</p>
+                                <p class="overlay-hint">Les lettres vertes sont correctes, jaunes mal placées</p>
+                                <button class="btn-primary" id="wordle-start">Commencer</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wordle-controls">
+                        <button class="btn-primary wordle-reset-btn" id="wordle-reset">🔄 Nouvelle Partie</button>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <p>&copy; 2024 Mini Jeux Premium - Plateforme Multijoueurs</p>
+                <p class="footer-links">
+                    <a href="#" class="footer-link">À propos</a> | 
+                    <a href="#" class="footer-link">Contact</a> | 
+                    <a href="#" class="footer-link">Conditions</a>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts modulaires -->
+    <script src="js/GameManager.js"></script>
+    <script src="js/PlayerManager.js"></script>
+    <script src="js/StatsManager.js"></script>
+    <script src="js/games/SnakeGame.js"></script>
+    <script src="js/games/TicTacToeGame.js"></script>
+    <script src="js/games/MemoryGame.js"></script>
+    <script src="js/games/ReactionGame.js"></script>
+    <script src="js/games/Puzzle2048Game.js"></script>
+    <script src="js/games/CalculatorGame.js"></script>
+    <script src="js/games/PongGame.js"></script>
+    <script src="js/games/WordleGame.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

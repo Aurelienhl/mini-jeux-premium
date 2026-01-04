@@ -1,0 +1,14 @@
+{
+  "name": "mini-jeux-premium",
+  "version": "1.0.0",
+  "description": "Plateforme premium de mini-jeux multijoueurs - Snake, Tic Tac Toe, Memory, 2048 et plus",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "build": "echo 'Static site - no build needed'",
+    "start": "python -m http.server 8000"
+  },
+  "keywords": ["jeux", "gaming", "mini-games", "snake", "tictactoe", "memory", "wordle", "2048"],
+  "author": "Mini Jeux Premium",
+  "license": "MIT"
+}
